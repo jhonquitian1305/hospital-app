@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -14,7 +15,9 @@ import { ConfigModule } from '@nestjs/config';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
+      timezone: '+05:00',
     }),
+    CommonModule,
   ],
   controllers: [],
   providers: [],
