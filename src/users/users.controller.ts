@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserMapper } from './mapper/user.mapper';
-import { PaginationDto } from 'src/common/dtos/request-pagination.dto';
+import { RequestPaginationDto } from 'src/common/dtos/request-pagination.dto';
 
 @Controller('users')
 export class UsersController {
@@ -15,7 +15,7 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(@Query() paginationDto: PaginationDto) {
+  async findAll(@Query() paginationDto: RequestPaginationDto) {
     return await this.usersService.findAll(paginationDto);
   }
 

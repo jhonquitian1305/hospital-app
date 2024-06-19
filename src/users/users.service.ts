@@ -1,14 +1,14 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from "bcrypt";
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import * as bcrypt from "bcrypt";
 import { HandleError } from '../common/handle-errors/handle-errors';
-import { PaginationDto } from 'src/common/dtos/request-pagination.dto';
-import { skip } from 'node:test';
+import { RequestPaginationDto } from 'src/common/dtos/request-pagination.dto';
 import { ResponsePaginatedDto } from 'src/common/dtos/response-pagination.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { UserMapper } from './mapper/user.mapper';
@@ -38,7 +38,7 @@ export class UsersService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: RequestPaginationDto) {
     const users = await this.userRepository.findAndCount({
       take: paginationDto.limit,
       skip: paginationDto.offset,
@@ -76,7 +76,7 @@ export class UsersService {
 
       await this.userRepository.save(user);
 
-      return user;
+      return UserMapper.userToUserDto(user);
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
@@ -86,8 +86,6 @@ export class UsersService {
   async remove(id: number) {
     try {
       const user = await this.findOne(id);
-
-      if(!user) throw new NotFoundException(`User with id: ${id} not found`);
 
       user.isActive = false;
       await this.userRepository.save(user);

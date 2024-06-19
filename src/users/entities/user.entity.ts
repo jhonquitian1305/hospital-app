@@ -1,4 +1,3 @@
-import { utimesSync } from "fs";
 import { BeforeInsert, Column, CreateDateColumn, Entity, Long, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')

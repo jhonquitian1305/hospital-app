@@ -3,6 +3,5 @@ export class ResponseUserDto{
     fullname: string;
     dni: string;
     email: string;
-    password: string;
     isActive?: boolean;
 }
