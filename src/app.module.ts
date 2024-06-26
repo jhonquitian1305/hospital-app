@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -17,11 +18,11 @@ import { DoctorsModule } from './doctors/doctors.module';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
-      timezone: '+05:00',
     }),
     CommonModule,
     UsersModule,
     DoctorsModule,
+    SchedulesModule,
   ],
   controllers: [],
   providers: [],
