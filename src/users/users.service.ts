@@ -32,17 +32,18 @@ export class UsersService {
   
       await this.userRepository.save(user);
   
-      return user;      
+      return UserMapper.userToUserDto(user);
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
   }
 
   async findAll(paginationDto: RequestPaginationDto) {
-    const users = await this.userRepository.findAndCount({
-      take: paginationDto.limit,
-      skip: paginationDto.offset,
-    })
+    const users = await this.userRepository.createQueryBuilder()
+      .where("isActive = true")
+      .take(paginationDto.limit)
+      .skip(paginationDto.offset)
+      .getManyAndCount();    
 
     const paginationUsers: ResponsePaginatedDto<ResponseUserDto> = {
       elements: users[0].map(user => UserMapper.userToUserDto(user)),
@@ -55,7 +56,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id, isActive: true });
 
     if(!user)
       throw new NotFoundException(`User with id ${id} not found`);
@@ -84,13 +85,8 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    try {
-      const user = await this.findOne(id);
-
-      user.isActive = false;
-      await this.userRepository.save(user);
-    } catch (error) {
-      HandleError.handleDBErrors(error);
-    }
+    const user = await this.findOne(id);
+    user.isActive = false;
+    await this.userRepository.save(user);
   }
 }
