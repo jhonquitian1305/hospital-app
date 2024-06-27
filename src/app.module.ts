@@ -5,6 +5,7 @@ import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { SpecialitiesModule } from './specialities/specialities.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SchedulesModule } from './schedules/schedules.module';
     UsersModule,
     DoctorsModule,
     SchedulesModule,
+    SpecialitiesModule,
   ],
   controllers: [],
   providers: [],

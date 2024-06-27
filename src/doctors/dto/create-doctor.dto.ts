@@ -1,4 +1,4 @@
-import { IsAlphanumeric, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsArray, IsNotEmpty, IsNotIn, IsNumber, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateDoctorDto {
 
@@ -17,4 +17,9 @@ export class CreateDoctorDto {
         message: 'The password must have a Uppercase, lowercase letter and a number',
     })
     password: string;
+
+    @IsNumber({}, {each: true})
+    @IsArray()
+    @IsNotEmpty()
+    specialitiesId: number[];
 }

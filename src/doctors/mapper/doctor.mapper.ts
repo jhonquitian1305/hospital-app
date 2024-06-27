@@ -7,7 +7,8 @@ export class DoctorMapper{
             id: doctor.id,
             name: doctor.name,
             username: doctor.username,
-            role: doctor.role
+            role: doctor.role,
+            specialities: doctor.specialities
         };
         return doctorDto;
     }

@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Speciality } from '../../specialities/entities/speciality.entity';
 
 @Entity('doctors')
 export class Doctor {
@@ -28,6 +29,10 @@ export class Doctor {
         default: true
     })
     isActive: boolean;
+
+    @ManyToMany(() => Speciality, { eager: true})
+    @JoinTable({ name: 'doctors_by_specialities'})
+    specialities!: Speciality[];
 
     @Column()
     @CreateDateColumn({ type: 'timestamp'})
