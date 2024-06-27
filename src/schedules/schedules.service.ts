@@ -39,7 +39,7 @@ export class SchedulesService {
 
       const scheduleSaved = await this.findByDoctorAndSchedule(doctor, scheduleDto);
       if(scheduleSaved)
-        throw new BadRequestException('HUbo un error');
+        throw new BadRequestException(`Date ${scheduleSaved.date} with schedule ${scheduleDto.startTime}-${scheduleDto.endTime} is already included in schedule ${scheduleSaved.startTime}-${scheduleSaved.endTime}`);
 
       let startHour = scheduleDto.startTime;
       let finalHour = scheduleDto.startTime + 1;
