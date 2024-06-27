@@ -54,10 +54,12 @@ export class DoctorsService {
   }
 
   async findAll(paginationDto: RequestPaginationDto) {
-    const doctors = await this.doctorRepository.findAndCount({
-      take: paginationDto.limit,
-      skip: paginationDto.offset,
-    });
+    const doctors = await this.doctorRepository.createQueryBuilder("dr")
+      .where("isActive = true")
+      .skip(paginationDto.offset)
+      .limit(paginationDto.limit)
+      .leftJoinAndSelect("dr.specialities", "specialities")
+      .getManyAndCount();
 
     const paginationDoctors: ResponsePaginatedDto<ResponseDoctorDto> = {
       elements: doctors[0].map(doctor => DoctorMapper.doctorToDoctorDto(doctor)),
@@ -70,7 +72,7 @@ export class DoctorsService {
   }
 
   async findOne(id: number) {
-    const doctor = await this.doctorRepository.findOneBy({ id });
+    const doctor = await this.doctorRepository.findOneBy({ id, isActive: true });
 
     if(!doctor)
       throw new NotFoundException(`Doctor with id ${id} not found`);
