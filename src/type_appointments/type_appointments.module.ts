@@ -11,6 +11,7 @@ import { SpecialitiesModule } from 'src/specialities/specialities.module';
   imports: [
     TypeOrmModule.forFeature([ TypeAppointment ]),
     SpecialitiesModule,
-  ]
+  ],
+  exports: [ TypeAppointmentsService, ],
 })
 export class TypeAppointmentsModule {}

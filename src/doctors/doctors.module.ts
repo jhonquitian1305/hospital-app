@@ -10,7 +10,7 @@ import { SpecialitiesModule } from '../specialities/specialities.module';
   providers: [DoctorsService],
   imports: [
     TypeOrmModule.forFeature([ Doctor ]),
-    SpecialitiesModule,
+    SpecialitiesModule
   ],
   exports: [ DoctorsService ]
 })

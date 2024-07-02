@@ -80,6 +80,21 @@ export class DoctorsService {
     return doctor;
   }
 
+  async findOneByIdAndSpeciality(id:number, speciality: Speciality){
+
+    const doctor = await this.doctorRepository.findOneBy({ 
+      id,
+      specialities: speciality,
+    });
+
+    console.log(doctor);
+
+    if(!doctor)
+      throw new NotFoundException(`Doctor with id ${id} and speciality ${speciality.name} not found`)
+
+    return doctor;
+  }
+
   async update(id: number, updateDoctorDto: UpdateDoctorDto) {
     try {
       const { password, ...doctorData } = updateDoctorDto;

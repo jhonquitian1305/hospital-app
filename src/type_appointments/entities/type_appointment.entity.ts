@@ -16,7 +16,8 @@ export class TypeAppointment {
     price: number;
 
     @ManyToOne(
-        () => Speciality
+        () => Speciality,
+        { eager: true },
     )
     speciality: Speciality;
 

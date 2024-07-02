@@ -11,6 +11,7 @@ import { Schedule, ScheduleByHour } from './entities';
   imports: [
     TypeOrmModule.forFeature([ Schedule, ScheduleByHour ]),
     DoctorsModule,
-  ]
+  ],
+  exports: [ SchedulesService, ],
 })
 export class SchedulesModule {}

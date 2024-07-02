@@ -7,6 +7,7 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { SpecialitiesModule } from './specialities/specialities.module';
 import { TypeAppointmentsModule } from './type_appointments/type_appointments.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TypeAppointmentsModule } from './type_appointments/type_appointments.mo
     SchedulesModule,
     SpecialitiesModule,
     TypeAppointmentsModule,
+    AppointmentsModule,
   ],
   controllers: [],
   providers: [],

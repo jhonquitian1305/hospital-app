@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 export class HandleError{
 
     static handleDBErrors(error: any): void {
@@ -6,5 +6,6 @@ export class HandleError{
             const errorMessage = error.sqlMessage.split(' ');
             throw new BadRequestException(`Duplicate entry ${errorMessage[2]}`);
         }
+        throw new InternalServerErrorException('Unexpected error, check server logs');
     }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { Repository } from 'typeorm';
@@ -123,6 +123,31 @@ export class SchedulesService {
       .getOne();
 
     return schedules;
+  }
+
+  async registerScheduleOfAppointment(doctor: Doctor, schedule: Date, startHour: number){
+    
+    const scheduleFound = await this.scheduleRepository.createQueryBuilder('sr')
+    .leftJoinAndSelect('sr.doctor', 'doctor', 'doctor.id = :doctorId',{
+      doctorId: doctor.id
+    })
+    .leftJoinAndSelect("sr.schedulesByHour", "scheByHour")
+    .where('sr.date = :schedule', {
+      schedule
+    })
+    .andWhere('scheByHour.startHour = :startHour AND scheByHour.isAvailable = true', {
+      startHour
+    })
+    .getOne();
+
+    if(!scheduleFound)
+      throw new NotFoundException(`No schedule for the date ${schedule} at time ${startHour}`);
+
+    let scheduleByHourOfAppointment =  scheduleFound.schedulesByHour.at(0);
+
+    scheduleByHourOfAppointment.isAvailable = false;
+
+    await this.scheduleByHourRepository.save(scheduleByHourOfAppointment);
   }
 
   remove(id: number) {
