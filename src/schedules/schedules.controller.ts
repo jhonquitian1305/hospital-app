@@ -1,9 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { RequestScheduleDto } from './dto/request-schedule.dto';
-import { RequestPaginationDto } from 'src/common/dtos';
+import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
 
 @Controller('schedules')
 export class SchedulesController {
@@ -17,6 +16,11 @@ export class SchedulesController {
   @Get()
   findAll(@Query() requestScheduleDto: RequestScheduleDto) {
     return this.schedulesService.findAll(requestScheduleDto);
+  }
+
+  @Get('schedules-by-hour')
+  findSchedulesByHour(@Query() requestScheduleByHourDto: RequestScheduleByHourDto){
+    return this.schedulesService.getSchedulesByHour(requestScheduleByHourDto);
   }
 
   @Delete(':id')

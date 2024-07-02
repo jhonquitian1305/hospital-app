@@ -9,6 +9,7 @@ import {  ResponsePaginatedDto } from '../common/dtos';
 import { ScheduleMapper } from './mapper/schedule.mapper';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { SchedulesDto } from './dto/create-schedule.dto';
+import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
 
 @Injectable()
 export class SchedulesService {
@@ -82,6 +83,8 @@ export class SchedulesService {
 
     const schedules = await this.scheduleRepository
       .createQueryBuilder('sr')
+      .leftJoinAndSelect('sr.doctor', 'srDoctor')
+      .leftJoinAndSelect('srDoctor.specialities', 'specialities')
       .where(`(:doctorId is null or sr.doctor = :doctorId)`, {
         doctorId: requestScheduleDto.doctorId,
       })
@@ -91,7 +94,7 @@ export class SchedulesService {
       .andWhere(`(:date is null or sr.date = :date)`, {
         date: requestScheduleDto.date,
       })
-      .leftJoinAndSelect('sr.doctor', 'srDoctor')
+      .andWhere('specialities.id = 1')
       .orderBy('srDoctor.id', 'ASC')
       .take(requestScheduleDto.limit)
       .skip(requestScheduleDto.offset)
@@ -148,6 +151,25 @@ export class SchedulesService {
     scheduleByHourOfAppointment.isAvailable = false;
 
     await this.scheduleByHourRepository.save(scheduleByHourOfAppointment);
+  }
+
+  async getSchedulesByHour(requestScheduleByHourDto: RequestScheduleByHourDto){
+    const schedulesByHour = await this.scheduleByHourRepository
+      .createQueryBuilder('scheByHour')
+      .innerJoinAndSelect('scheByHour.schedule', 'schedule')
+      .innerJoinAndSelect('schedule.doctor', 'doctor')
+      .innerJoin('doctor.specialities', 'specialities')
+      .where('scheByHour.isAvailable = true and schedule.date >= sysdate()')
+      .andWhere('(:doctorId is null or doctor.id = :doctorId)', {
+        doctorId: requestScheduleByHourDto.doctorId,
+      })
+      .andWhere('(:specialityId is null or specialities.id = :specialityId)', {
+        specialityId: requestScheduleByHourDto.specialityId,
+      })
+      .orderBy('schedule.date', 'ASC')
+      .getMany();
+
+      return schedulesByHour.map(scheduleByHour => ScheduleMapper.responseScheduleByHour(scheduleByHour));
   }
 
   remove(id: number) {

@@ -1,5 +1,6 @@
 import { ResponseScheduleDto } from "../dto";
-import { Schedule } from "../entities";
+import { ResponseScheduleByHour } from "../dto/response-schedule-by-hour.dto";
+import { Schedule, ScheduleByHour } from "../entities";
 
 export class ScheduleMapper{
     static scheduleToScheduleDto(schedule: Schedule): ResponseScheduleDto {
@@ -12,5 +13,17 @@ export class ScheduleMapper{
             endTime: schedule.endTime,
         }
         return scheduleDto;
+    }
+
+    static responseScheduleByHour(scheduleByHour: ScheduleByHour){
+        const scheduleByHourDto: ResponseScheduleByHour = {            
+            date: scheduleByHour.schedule.date,
+            startHour: scheduleByHour.startHour,
+            finalHour: scheduleByHour.finalHour,
+            isAvailable: scheduleByHour.isAvailable,
+            doctor: scheduleByHour.schedule.doctor.name,
+        }
+
+        return scheduleByHourDto;
     }
 }
