@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, ParseIntPipe } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { RequestAppointmentDto } from './dto/request-appointment.dto';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -15,7 +16,12 @@ export class AppointmentsController {
   }
 
   @Get()
-  findAll() {
-    return this.appointmentsService.findAll();
+  findAll(@Query() requestAppointmentDto: RequestAppointmentDto) {
+    return this.appointmentsService.findAll(requestAppointmentDto);
+  }
+
+  @Get(':id')
+  findOneById(@Param('id', ParseIntPipe) id: number){
+    return this.appointmentsService.findOneById(id);
   }
 }

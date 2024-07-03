@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,8 +9,10 @@ import { DoctorsService } from 'src/doctors/doctors.service';
 import { TypeAppointmentsService } from 'src/type_appointments/type_appointments.service';
 import { SchedulesService } from 'src/schedules/schedules.service';
 import { HandleError } from 'src/common/handle-errors/handle-errors';
-import { State } from './entities/state.entity';
 import { StatesEnum } from './dto/state.enum';
+import { RequestAppointmentDto } from './dto/request-appointment.dto';
+import { ResponsePaginatedDto } from 'src/common/dtos';
+import { AppointmentMapper } from './mapper/appointment.mapper';
 
 @Injectable()
 export class AppointmentsService {
@@ -20,9 +22,6 @@ export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
     private readonly appointmentRepository: Repository<Appointment>,
-
-    @InjectRepository(State)
-    private readonly statesRepository: Repository<State>,
 
     @Inject()
     private readonly usersService: UsersService,
@@ -78,12 +77,50 @@ export class AppointmentsService {
     }    
   }
 
-  async findAll() {
-    return await this.appointmentRepository.findBy({ state: { id : StatesEnum.CREADA}});
+  async findAll(requestAppointmentDto: RequestAppointmentDto) {
+    const appointments = await this.appointmentRepository
+    .createQueryBuilder('ar')
+    .innerJoinAndSelect('ar.user', 'user')
+    .innerJoinAndSelect('ar.doctor', 'doctor')
+    .innerJoinAndSelect('ar.type', 'type')
+    .innerJoinAndSelect('ar.state', 'state')
+    .where('(:startHour is null OR ar.startHour = :startHour) AND (:schedule is null OR ar.schedule = :schedule)', {
+      startHour: requestAppointmentDto.startHour,
+      schedule: requestAppointmentDto.date,
+    })
+    .andWhere('(:userDni is null OR user.dni = :userDni)', {
+      userDni: requestAppointmentDto.userDni,
+    })
+    .andWhere('(:doctorId is null OR doctor.id = :doctorId)', {
+      doctorId: requestAppointmentDto.doctorId,
+    })
+    .andWhere('(:typeId is null OR type.id = :typeId)', {
+      typeId: requestAppointmentDto.typeAppointmentId,
+    })
+    .andWhere('(:stateId is null OR state.id = :stateId)', {
+      stateId: requestAppointmentDto.stateId,
+    })
+    .limit(requestAppointmentDto.limit)
+    .offset(requestAppointmentDto.offset)
+    .getManyAndCount();
+
+    const responseAppointmentDto: ResponsePaginatedDto<ResponseAppointmentDto> = {
+      elements: appointments[0].map(appointment => AppointmentMapper.appointmentToAppointmentDto(appointment)),
+      totalElements: appointments[1],
+      limit: requestAppointmentDto.limit,
+      offset: requestAppointmentDto.offset,
+    }
+    
+    return responseAppointmentDto;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} appointment`;
+  async findOneById(id: number) {
+    const appointment = await this.appointmentRepository.findOneBy({ id });
+
+    if(!appointment)
+      throw new NotFoundException(`Appointment with id ${id} not found`);
+
+    return AppointmentMapper.appointmentToAppointmentDto(appointment);
   }
 
   update(id: number, updateAppointmentDto: UpdateAppointmentDto) {

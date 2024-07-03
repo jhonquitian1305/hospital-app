@@ -9,10 +9,10 @@ export class Appointment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { eager: true })
     user: User;
 
-    @ManyToOne(() => Doctor)
+    @ManyToOne(() => Doctor, { eager: true })
     doctor: Doctor;
 
     @Column({
@@ -27,10 +27,10 @@ export class Appointment {
     @Column('int')
     startHour: number;
 
-    @ManyToOne(() => TypeAppointment)
+    @ManyToOne(() => TypeAppointment, { eager: true })
     type: TypeAppointment;
 
-    @ManyToOne(() => State)
+    @ManyToOne(() => State, { eager: true })
     state: State;
 
     @Column({
