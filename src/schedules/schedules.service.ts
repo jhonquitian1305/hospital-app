@@ -192,6 +192,7 @@ export class SchedulesService {
         specialityId: requestScheduleByHourDto.specialityId,
       })
       .orderBy('schedule.date', 'ASC')
+      .addOrderBy('scheByHour.startHour', 'ASC')
       .getMany();
 
       return schedulesByHour.map(scheduleByHour => ScheduleMapper.responseScheduleByHour(scheduleByHour));
