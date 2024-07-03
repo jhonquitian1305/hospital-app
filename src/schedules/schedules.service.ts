@@ -115,7 +115,9 @@ export class SchedulesService {
       .andWhere(`(:date is null or sr.date = :date)`, {
         date: requestScheduleDto.date,
       })
-      .andWhere('specialities.id = 1')
+      .andWhere('(:specialityId is null or specialities.id = :specialityId)',{
+        specialityId: requestScheduleDto.specialityId,
+      })
       .orderBy('srDoctor.id', 'ASC')
       .take(requestScheduleDto.limit)
       .skip(requestScheduleDto.offset)

@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsDateString, IsInt, IsNumber, IsOptional, IsPositive, Min } from "class-validator";
-import { DateInput, date } from "@formkit/tempo";
+import { DateInput } from "@formkit/tempo";
 
 export class RequestScheduleDto{
     
@@ -9,6 +9,12 @@ export class RequestScheduleDto{
     @IsPositive()
     @Type(() => Number)
     doctorId: number;
+    
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    @Type(() => Number)
+    specialityId: number;
 
     @IsOptional()
     @IsDateString({}, { message: "the date must be in YYYY-MM-DD format" })
