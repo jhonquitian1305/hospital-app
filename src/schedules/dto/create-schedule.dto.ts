@@ -1,4 +1,6 @@
-import { IsArray, IsDate, IsNotEmpty, IsNumber } from "class-validator";
+import { DateInput } from "@formkit/tempo";
+import { Type } from "class-transformer";
+import { IsArray, IsDateString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateScheduleDto {
     @IsNumber()
@@ -6,12 +8,13 @@ export class CreateScheduleDto {
 
     @IsNotEmpty()
     @IsArray()
+    @Type(() => SchedulesDto)
     schedulesDto: SchedulesDto[];
 }
 
 export class SchedulesDto {
-    @IsDate()
-    date: Date;
+    @IsDateString({}, { message: "the date must be in YYYY-MM-DD format" })
+    date: DateInput;
 
     @IsNumber()
     startTime: number;

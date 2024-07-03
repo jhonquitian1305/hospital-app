@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsDateString, IsInt, IsNumber, IsOptional, IsPositive, Min } from "class-validator";
-import { RequestPaginationDto } from '../../common/dtos/request-pagination.dto';
+import { DateInput, date } from "@formkit/tempo";
 
 export class RequestScheduleDto{
     
@@ -12,7 +12,7 @@ export class RequestScheduleDto{
 
     @IsOptional()
     @IsDateString({}, { message: "the date must be in YYYY-MM-DD format" })
-    date: Date;
+    date: DateInput;
 
     @IsOptional()
     @IsInt()

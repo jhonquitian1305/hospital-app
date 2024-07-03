@@ -10,6 +10,7 @@ import { ScheduleMapper } from './mapper/schedule.mapper';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { SchedulesDto } from './dto/create-schedule.dto';
 import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
+import { format, isBefore, isEqual } from '@formkit/tempo';
 
 @Injectable()
 export class SchedulesService {
@@ -26,6 +27,10 @@ export class SchedulesService {
   ){}
 
   async create(createScheduleDto: CreateScheduleDto) {
+
+    const newDate = new Date();
+    const date = format(newDate, "YYYY-MM-DD", "en");
+    
     const { schedulesDto } = createScheduleDto;
     const doctor = await this.doctorService.findOne(createScheduleDto.doctorId);
 
@@ -36,6 +41,20 @@ export class SchedulesService {
       const scheduleDto = schedulesDto[iterator]
       if(scheduleDto.startTime >= scheduleDto.endTime){
         throw new BadRequestException(`endTime ${scheduleDto.endTime} must be greater than startTime ${scheduleDto.startTime}`);
+      }
+
+      if(isBefore(scheduleDto.date, date))
+        throw new BadRequestException(`Date ${scheduleDto.date} must not be earlier than the current date(${date})`);
+        
+      const hour = Number(format(new Date(), 'HH'));
+      const minute = Number(format(new Date(), 'mm'));
+
+      if(isEqual(scheduleDto.date, date) && hour+1 === scheduleDto.startTime && minute > 30){
+        throw new BadRequestException(`Hour ${scheduleDto.startTime} of current date ${scheduleDto.date} is not allow, must be at least ${hour+2}`)
+      }
+
+      if(isEqual(scheduleDto.date, date) && hour+1 > scheduleDto.startTime){
+        throw new BadRequestException(`Hour ${scheduleDto.startTime} of current date ${scheduleDto.date} must not be earlier or equal than the current time(${hour})`);
       }
 
       const scheduleSaved = await this.findByDoctorAndSchedule(doctor, scheduleDto);
@@ -76,7 +95,9 @@ export class SchedulesService {
 
     await this.scheduleRepository.save(schedulesToSave);
 
-    return 'Schedule created successfully'
+    return {
+      message: 'Schedule created successfully'
+    };
   }
 
   async findAll(requestScheduleDto: RequestScheduleDto) {
@@ -114,11 +135,13 @@ export class SchedulesService {
   async findByDoctorAndSchedule(doctor: Doctor, scheduleDto: SchedulesDto) {
     const schedules = await this.scheduleRepository
       .createQueryBuilder('sr')
-      .where(':date = sr.date AND (:startHour >= sr.startTime AND :startHour < sr.endTime)', {
+      .orWhere('sr.doctor.id = :doctorId AND :date = sr.date AND (:startHour >= sr.startTime AND :startHour < sr.endTime)', {
+        doctorId: doctor.id,
         date: scheduleDto.date,
         startHour: scheduleDto.startTime,
       })
-      .orWhere(':date = sr.date AND (:startHour <= sr.startTime AND :endHour > sr.startTime)', {
+      .orWhere('sr.doctor.id = :doctorId AND :date = sr.date AND (:startHour <= sr.startTime AND :endHour > sr.startTime)', {
+        doctorId: doctor.id,
         date: scheduleDto.date,
         startHour: scheduleDto.startTime,
         endHour: scheduleDto.endTime,
