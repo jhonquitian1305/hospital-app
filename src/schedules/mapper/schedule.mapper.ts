@@ -6,9 +6,11 @@ export class ScheduleMapper{
     static scheduleToScheduleDto(schedule: Schedule): ResponseScheduleDto {
         let scheduleDto: ResponseScheduleDto = {
             id: schedule.id,
-            doctorId: schedule.doctor.id,
-            doctorName: schedule.doctor.name,
             date: schedule.date,
+            doctor: {
+                id: schedule.doctor.id,
+                name: schedule.doctor.name
+            },
             startTime: schedule.startTime,
             endTime: schedule.endTime,
         }
@@ -21,7 +23,10 @@ export class ScheduleMapper{
             startHour: scheduleByHour.startHour,
             finalHour: scheduleByHour.finalHour,
             isAvailable: scheduleByHour.isAvailable,
-            doctor: scheduleByHour.schedule.doctor.name,
+            doctor: {
+                id: scheduleByHour.schedule.doctor.id,
+                name: scheduleByHour.schedule.doctor.name,
+            },
         }
 
         return scheduleByHourDto;

@@ -3,5 +3,10 @@ export class ResponseScheduleByHour {
     startHour:   number;
     finalHour:   number;
     isAvailable: boolean;
-    doctor:      string;
+    doctor:      DoctorResponse;
+}
+
+class DoctorResponse {
+    id: number;
+    name: string;
 }
