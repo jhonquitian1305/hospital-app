@@ -3,7 +3,7 @@ class ResponseAppointmentDto {
     description:  string;
     schedule:     Date;
     startHour:    number;
-    completed_at: Date;
+    completed_at: string;
     user:         UserResponse;
     doctor:       DoctorResponse;
     type:         TypeResponse;

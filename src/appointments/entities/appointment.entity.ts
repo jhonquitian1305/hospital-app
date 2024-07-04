@@ -37,5 +37,5 @@ export class Appointment {
         type: 'timestamp',
         nullable: true,
     })
-    completed_at?: Date;
+    completed_at?: string;
 }

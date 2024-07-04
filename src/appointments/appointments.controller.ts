@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Query, ParseIntPipe } from '
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { RequestAppointmentDto } from './dto/request-appointment.dto';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -11,7 +12,7 @@ export class AppointmentsController {
   async create(@Body() createAppointmentDto: CreateAppointmentDto) {
     await this.appointmentsService.create(createAppointmentDto);
     return {
-      'message': 'The appointment has been successfully created'
+      message: 'The appointment has been successfully created'
     };
   }
 
@@ -23,5 +24,10 @@ export class AppointmentsController {
   @Get(':id')
   findOneById(@Param('id', ParseIntPipe) id: number){
     return this.appointmentsService.findOneById(id);
+  }
+
+  @Patch(':id')
+  async registerAppointmentCompleted(@Param('id', ParseIntPipe) id: number, @Body() updateAppointmentDto: UpdateAppointmentDto){
+    await this.appointmentsService.registerAppointmentCompleted(id, updateAppointmentDto);
   }
 }

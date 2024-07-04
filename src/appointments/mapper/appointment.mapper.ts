@@ -1,4 +1,5 @@
 import { Appointment } from "../entities/appointment.entity";
+import { format } from '@formkit/tempo';
 
 export class AppointmentMapper {
     static appointmentToAppointmentDto(appointment: Appointment){
@@ -7,7 +8,7 @@ export class AppointmentMapper {
             description: appointment.description,
             schedule: appointment.schedule,
             startHour: appointment.startHour,
-            completed_at: appointment.completed_at,
+            completed_at: format(appointment.completed_at, "YYYY-MM-DD HH:mm:ss"),
             user: {
                 id: appointment.user.id,
                 fullname: appointment.user.fullname,

@@ -13,6 +13,7 @@ import { StatesEnum } from './dto/state.enum';
 import { RequestAppointmentDto } from './dto/request-appointment.dto';
 import { ResponsePaginatedDto } from 'src/common/dtos';
 import { AppointmentMapper } from './mapper/appointment.mapper';
+import { format } from '@formkit/tempo';
 
 @Injectable()
 export class AppointmentsService {
@@ -123,8 +124,24 @@ export class AppointmentsService {
     return AppointmentMapper.appointmentToAppointmentDto(appointment);
   }
 
-  update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    return `This action updates a #${id} appointment`;
+  async registerAppointmentCompleted(id: number, updateAppointmentDto: UpdateAppointmentDto) {
+    const newDate = new Date();
+    const date = format(newDate, "YYYY-MM-DD HH:mm:ss", "en");
+
+    const appointment = await this.appointmentRepository.findOneBy({id, state: { id: StatesEnum.CREADA }});
+
+    if(!appointment)
+      throw new NotFoundException(`appointment with id ${id} not found`);
+
+    appointment.description = updateAppointmentDto.description;
+    appointment.state.id = StatesEnum.COMPLETADA;
+    appointment.completed_at = date;
+
+    await this.appointmentRepository.save(appointment);
+
+    return {
+      message: 'Information stored successfully',
+    };
   }
 
   remove(id: number) {
