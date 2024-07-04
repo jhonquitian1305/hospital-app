@@ -21,6 +21,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
+      timezone: "-05:00"
     }),
     CommonModule,
     UsersModule,
