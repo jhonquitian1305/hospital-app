@@ -4,7 +4,6 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
 import { DataSource, Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
 import { DoctorsService } from 'src/doctors/doctors.service';
 import { TypeAppointmentsService } from 'src/type_appointments/type_appointments.service';
 import { SchedulesService } from 'src/schedules/schedules.service';
@@ -14,6 +13,7 @@ import { RequestAppointmentDto } from './dto/request-appointment.dto';
 import { ResponsePaginatedDto } from 'src/common/dtos';
 import { AppointmentMapper } from './mapper/appointment.mapper';
 import { format } from '@formkit/tempo';
+import { PatientsService } from '../patients/patients.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -25,7 +25,7 @@ export class AppointmentsService {
     private readonly appointmentRepository: Repository<Appointment>,
 
     @Inject()
-    private readonly usersService: UsersService,
+    private readonly patientsService: PatientsService,
 
     @Inject()
     private readonly doctorsService: DoctorsService,
@@ -47,7 +47,7 @@ export class AppointmentsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const user = await this.usersService.findOne(userId);
+    const user = await this.patientsService.findOne(userId);
 
     const typeAppointment = await this.typeAppointmentService.findOne(typeId);
 
@@ -58,7 +58,7 @@ export class AppointmentsService {
     try {
       const appointment = this.appointmentRepository.create({
         ...appointmentData,
-        user,
+        patient: user,
         doctor,
         type: typeAppointment,
         state: { id: StatesEnum.CREADA}

@@ -4,7 +4,7 @@ class ResponseAppointmentDto {
     schedule:     Date;
     startHour:    number;
     completed_at: string;
-    user:         UserResponse;
+    patient:      PatientResponse;
     doctor:       DoctorResponse;
     type:         TypeResponse;
     state:        StateResponse;
@@ -26,7 +26,7 @@ class TypeResponse {
     name:        string;
 }
 
-class UserResponse {
+class PatientResponse {
     id:         number;
     fullname:   string;
     dni:        string;

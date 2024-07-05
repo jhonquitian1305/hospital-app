@@ -3,50 +3,50 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from "bcrypt";
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { CreatePatientDto } from './dto/create-patient.dto';
+import { UpdateUserDto } from './dto/update-patient.dto';
+import { Patient } from './entities/patient.entity';
 
 import { HandleError } from '../common/handle-errors/handle-errors';
 import { RequestPaginationDto } from 'src/common/dtos/request-pagination.dto';
 import { ResponsePaginatedDto } from 'src/common/dtos/response-pagination.dto';
-import { ResponseUserDto } from './dto/response-user.dto';
-import { UserMapper } from './mapper/user.mapper';
+import { ResponsePatientDto } from './dto/response-patient.dto';
+import { PatientMapper } from './mapper/patient.mapper';
 
 @Injectable()
-export class UsersService {
+export class PatientsService {
 
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    @InjectRepository(Patient)
+    private readonly patientsRepository: Repository<Patient>
   ){}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreatePatientDto) {
     try {
       const { password, ...userData } = createUserDto;
   
-      const user = this.userRepository.create({
+      const user = this.patientsRepository.create({
         ...userData,
         password: bcrypt.hashSync(password, 10),
       });
   
-      await this.userRepository.save(user);
+      await this.patientsRepository.save(user);
   
-      return UserMapper.userToUserDto(user);
+      return PatientMapper.patientToPatientDto(user);
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
   }
 
   async findAll(paginationDto: RequestPaginationDto) {
-    const users = await this.userRepository.createQueryBuilder()
+    const users = await this.patientsRepository.createQueryBuilder()
       .where("isActive = true")
       .take(paginationDto.limit)
       .skip(paginationDto.offset)
       .getManyAndCount();    
 
-    const paginationUsers: ResponsePaginatedDto<ResponseUserDto> = {
-      elements: users[0].map(user => UserMapper.userToUserDto(user)),
+    const paginationUsers: ResponsePaginatedDto<ResponsePatientDto> = {
+      elements: users[0].map(user => PatientMapper.patientToPatientDto(user)),
       totalElements: users[1],
       limit: paginationDto.limit,
       offset: paginationDto.offset,
@@ -56,7 +56,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOneBy({ id, isActive: true });
+    const user = await this.patientsRepository.findOneBy({ id, isActive: true });
 
     if(!user)
       throw new NotFoundException(`User with id ${id} not found`);
@@ -68,16 +68,16 @@ export class UsersService {
     try {
       const { password, ...userData } = updateUserDto;
 
-      const user = await this.userRepository.preload({
+      const user = await this.patientsRepository.preload({
         id,
         ...userData,
       });
 
       if(!user) throw new NotFoundException(`User with id: ${id} not found`);
 
-      await this.userRepository.save(user);
+      await this.patientsRepository.save(user);
 
-      return UserMapper.userToUserDto(user);
+      return PatientMapper.patientToPatientDto(user);
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
@@ -87,6 +87,6 @@ export class UsersService {
   async remove(id: number) {
     const user = await this.findOne(id);
     user.isActive = false;
-    await this.userRepository.save(user);
+    await this.patientsRepository.save(user);
   }
 }

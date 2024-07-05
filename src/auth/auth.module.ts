@@ -1,4 +1,4 @@
-import { User } from './../users/entities/user.entity';
+import { Patient } from '../patients/entities/patient.entity';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -12,7 +12,7 @@ import { Doctor } from '../doctors/entities/doctor.entity';
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, ],
   imports: [
-    TypeOrmModule.forFeature([ User, Doctor ]),
+    TypeOrmModule.forFeature([ Patient, Doctor ]),
     PassportModule.register({ 'defaultStrategy': 'jwt' }),
     JwtModule.registerAsync({
       useFactory: () => {

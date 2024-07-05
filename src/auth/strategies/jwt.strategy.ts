@@ -4,14 +4,14 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { JwtPayload } from "../interfaces/jwt-payload.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Doctor } from "src/doctors/entities/doctor.entity";
-import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
+import { Patient } from '../../patients/entities/patient.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-        @InjectRepository(User)
-        private readonly usersRepository: Repository<User>,
+        @InjectRepository(Patient)
+        private readonly usersRepository: Repository<Patient>,
 
         @InjectRepository(Doctor)
         private readonly doctorsRepository: Repository<Doctor>,

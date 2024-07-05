@@ -1,9 +1,9 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, Long, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, Long, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('users')
-export class User {
+@Entity('patients')
+export class Patient {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
 
     @Column('text')

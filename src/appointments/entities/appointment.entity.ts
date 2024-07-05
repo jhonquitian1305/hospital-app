@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from '../../users/entities/user.entity';
+import { Patient } from '../../patients/entities/patient.entity';
 import { Doctor } from '../../doctors/entities/doctor.entity';
 import { TypeAppointment } from "../../type_appointments/entities/type_appointment.entity";
 import { State } from "./state.entity";
@@ -9,8 +9,8 @@ export class Appointment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, { eager: true })
-    user: User;
+    @ManyToOne(() => Patient, { eager: true })
+    patient: Patient;
 
     @ManyToOne(() => Doctor, { eager: true })
     doctor: Doctor;

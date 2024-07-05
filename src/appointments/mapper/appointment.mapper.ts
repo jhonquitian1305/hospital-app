@@ -9,11 +9,11 @@ export class AppointmentMapper {
             schedule: appointment.schedule,
             startHour: appointment.startHour,
             completed_at: format(appointment.completed_at, "YYYY-MM-DD HH:mm:ss"),
-            user: {
-                id: appointment.user.id,
-                fullname: appointment.user.fullname,
-                dni: appointment.user.dni,
-                email: appointment.user.email,
+            patient: {
+                id: appointment.patient.id,
+                fullname: appointment.patient.fullname,
+                dni: appointment.patient.dni,
+                email: appointment.patient.email,
             },
             doctor: {
                 id: appointment.doctor.id,

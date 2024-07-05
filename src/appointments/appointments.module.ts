@@ -4,9 +4,9 @@ import { AppointmentsController } from './appointments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
 import { State } from './entities/state.entity';
-import { UsersModule } from 'src/users/users.module';
-import { DoctorsModule } from 'src/doctors/doctors.module';
-import { TypeAppointmentsModule } from 'src/type_appointments/type_appointments.module';
+import { PatientsModule } from './../patients/patients.module';
+import { DoctorsModule } from './../doctors/doctors.module';
+import { TypeAppointmentsModule } from './../type_appointments/type_appointments.module';
 import { SchedulesModule } from 'src/schedules/schedules.module';
 
 @Module({
@@ -14,7 +14,7 @@ import { SchedulesModule } from 'src/schedules/schedules.module';
   providers: [AppointmentsService],
   imports: [
     TypeOrmModule.forFeature([ Appointment, State ]),
-    UsersModule,
+    PatientsModule,
     DoctorsModule,
     TypeAppointmentsModule,
     SchedulesModule,

@@ -1,4 +1,4 @@
-export class ResponseUserDto{
+export class ResponsePatientDto{
     id?: number;
     fullname: string;
     dni: string;

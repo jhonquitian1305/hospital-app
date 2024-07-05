@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from './common/common.module';
-import { UsersModule } from './users/users.module';
+import { PatientsModule } from './patients/patients.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { SpecialitiesModule } from './specialities/specialities.module';
@@ -25,7 +25,7 @@ import { AuthModule } from './auth/auth.module';
       timezone: "-05:00"
     }),
     CommonModule,
-    UsersModule,
+    PatientsModule,
     DoctorsModule,
     SchedulesModule,
     SpecialitiesModule,
