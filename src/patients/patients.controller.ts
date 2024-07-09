@@ -4,11 +4,10 @@ import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdateUserDto } from './dto/update-patient.dto';
 import { PatientMapper } from './mapper/patient.mapper';
 import { RequestPaginationDto } from 'src/common/dtos/request-pagination.dto';
-import { Patient } from './entities/patient.entity';
-import { ValidRoles } from 'src/auth/interfaces';
-import { Auth, GetUser } from '../auth/decorators';
+import { Auth } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces/valid-role.enum';
 
-@Controller('users')
+@Controller('patients')
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
@@ -18,9 +17,8 @@ export class PatientsController {
   }
 
   @Get()
-  @Auth(ValidRoles.doctor, ValidRoles.user)
-  async findAll(@Query() paginationDto: RequestPaginationDto, @GetUser() user: Patient) {
-    console.log(user);
+  @Auth(ValidRoles.doctor)
+  async findAll(@Query() paginationDto: RequestPaginationDto) {
     return await this.patientsService.findAll(paginationDto);
   }
 
@@ -39,7 +37,7 @@ export class PatientsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.patientsService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.patientsService.remove(id);
   }
 }

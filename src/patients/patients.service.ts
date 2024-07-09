@@ -1,7 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from "bcrypt";
 
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdateUserDto } from './dto/update-patient.dto';
@@ -12,27 +11,26 @@ import { RequestPaginationDto } from 'src/common/dtos/request-pagination.dto';
 import { ResponsePaginatedDto } from 'src/common/dtos/response-pagination.dto';
 import { ResponsePatientDto } from './dto/response-patient.dto';
 import { PatientMapper } from './mapper/patient.mapper';
+import { UsersService } from '../users/users.service';
+import { RolesEnum } from '../users/dto/role.enum';
 
 @Injectable()
 export class PatientsService {
 
   constructor(
     @InjectRepository(Patient)
-    private readonly patientsRepository: Repository<Patient>
+    private readonly patientsRepository: Repository<Patient>,
+
+    @Inject()
+    private readonly usersService: UsersService,
   ){}
 
-  async create(createUserDto: CreatePatientDto) {
-    try {
-      const { password, ...userData } = createUserDto;
+  async create(createPatientDto: CreatePatientDto) {
+    const patient = await this.usersService.create(createPatientDto, RolesEnum.PATIENT);
+    try {  
+      await this.patientsRepository.save(patient);
   
-      const user = this.patientsRepository.create({
-        ...userData,
-        password: bcrypt.hashSync(password, 10),
-      });
-  
-      await this.patientsRepository.save(user);
-  
-      return PatientMapper.patientToPatientDto(user);
+      return PatientMapper.patientToPatientDto(patient);
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
@@ -86,6 +84,7 @@ export class PatientsService {
 
   async remove(id: number) {
     const user = await this.findOne(id);
+    await this.usersService.deleteOne(id);
     user.isActive = false;
     await this.patientsRepository.save(user);
   }

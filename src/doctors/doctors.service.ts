@@ -12,6 +12,8 @@ import { RequestPaginationDto, ResponsePaginatedDto } from 'src/common/dtos';
 import { ResponseDoctorDto } from './dto/response-doctor.dto';
 import { Speciality } from '../specialities/entities/speciality.entity';
 import { SpecialitiesService } from 'src/specialities/specialities.service';
+import { UsersService } from '../users/users.service';
+import { RolesEnum } from '../users/dto/role.enum';
 
 @Injectable()
 export class DoctorsService {
@@ -22,6 +24,9 @@ export class DoctorsService {
 
     @Inject()
     private readonly specialitiesService: SpecialitiesService,
+
+    @Inject()
+    private readonly usersService: UsersService,
   ){}
 
   async create(createDoctorDto: CreateDoctorDto) {
@@ -29,7 +34,7 @@ export class DoctorsService {
       throw new BadRequestException('Doctors must have 1 or more specialities');
     }
 
-    const { password, specialitiesId, ...doctorData } = createDoctorDto;
+    const { specialitiesId } = createDoctorDto;
 
     const specialitiesFound: Speciality[] = [];
 
@@ -37,11 +42,12 @@ export class DoctorsService {
       specialitiesFound.push(await this.specialitiesService.findOne(specialityId))
     }
 
+    const user = await this.usersService.create(createDoctorDto, RolesEnum.DOCTOR);
+
     try {
   
       const doctor = this.doctorRepository.create({
-        ...doctorData,
-        password: bcrypt.hashSync(password, 10),
+        ...user,
         specialities: specialitiesFound,
       });
   
@@ -117,6 +123,7 @@ export class DoctorsService {
 
   async remove(id: number) {
     const doctor = await this.findOne(id);
+    await this.usersService.deleteOne(id);
 
     doctor.isActive = false;
     await this.doctorRepository.save(doctor);

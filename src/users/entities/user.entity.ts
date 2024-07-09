@@ -1,9 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm";
-import { Speciality } from '../../specialities/entities/speciality.entity';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "./role.entity";
 
-@Entity('doctors')
-export class Doctor {
-    @PrimaryColumn()
+@Entity('users')
+export class User {
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column('text')
@@ -27,6 +27,12 @@ export class Doctor {
     })
     password: string;
 
+    @ManyToOne(
+        () => Role,
+        { eager: true }
+    )
+    role: Role;
+
     @Column({
         type: 'boolean',
         default: true
@@ -36,8 +42,4 @@ export class Doctor {
     @Column()
     @CreateDateColumn({ type: 'timestamp'})
     created_at: Date;
-
-    @ManyToMany(() => Speciality, { eager: true})
-    @JoinTable({ name: 'doctors_by_specialities'})
-    specialities!: Speciality[];
 }

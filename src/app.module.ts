@@ -9,6 +9,7 @@ import { SpecialitiesModule } from './specialities/specialities.module';
 import { TypeAppointmentsModule } from './type_appointments/type_appointments.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
     TypeAppointmentsModule,
     AppointmentsModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

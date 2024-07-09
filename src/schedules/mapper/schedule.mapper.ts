@@ -9,7 +9,7 @@ export class ScheduleMapper{
             date: schedule.date,
             doctor: {
                 id: schedule.doctor.id,
-                name: schedule.doctor.name
+                name: schedule.doctor.fullname
             },
             startTime: schedule.startTime,
             endTime: schedule.endTime,
@@ -25,7 +25,7 @@ export class ScheduleMapper{
             isAvailable: scheduleByHour.isAvailable,
             doctor: {
                 id: scheduleByHour.schedule.doctor.id,
-                name: scheduleByHour.schedule.doctor.name,
+                name: scheduleByHour.schedule.doctor.fullname,
             },
         }
 

@@ -5,9 +5,10 @@ export class DoctorMapper{
     static doctorToDoctorDto(doctor: Doctor): ResponseDoctorDto {
         const doctorDto: ResponseDoctorDto = {
             id: doctor.id,
-            name: doctor.name,
-            username: doctor.username,
-            role: doctor.role,
+            fullname: doctor.fullname,
+            dni: doctor.dni,
+            email: doctor.email,
+            isActive: doctor.isActive,
             specialities: doctor.specialities
         };
         return doctorDto;

@@ -31,10 +31,10 @@ export class DoctorsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    this.doctorsService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.doctorsService.remove(id);
     return {
-      "message": `doctor with id ${id} deleted successfully`,
+      message: `doctor with id ${id} deleted successfully`,
     };
   }
 }

@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, Long, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {  Column, CreateDateColumn, Entity, Long, PrimaryColumn } from "typeorm";
 
 @Entity('patients')
 export class Patient {
@@ -27,9 +27,6 @@ export class Patient {
     })
     password: string;
 
-    @Column('varchar')
-    role: string;
-
     @Column({
         type: 'boolean',
         default: true
@@ -39,9 +36,4 @@ export class Patient {
     @Column()
     @CreateDateColumn({ type: 'timestamp'})
     created_at: Date;
-
-    @BeforeInsert()
-    createRoleUser(){
-        this.role = 'user';
-    }
 }
