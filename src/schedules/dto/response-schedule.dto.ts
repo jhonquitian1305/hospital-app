@@ -1,6 +1,6 @@
 export class ResponseScheduleDto{
     id: number;
-    doctor: DoctorResponse;
+    doctor?: DoctorResponse;
     date: Date;
     startTime: number;
     endTime: number;

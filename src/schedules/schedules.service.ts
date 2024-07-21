@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DoctorsService } from '../doctors/doctors.service';
 import { CreateScheduleDto, RequestScheduleDto, ResponseScheduleDto } from './dto';
 import { ScheduleByHour } from './entities';
@@ -10,7 +10,7 @@ import { ScheduleMapper } from './mapper/schedule.mapper';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { SchedulesDto } from './dto/create-schedule.dto';
 import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
-import { format, isBefore, isEqual } from '@formkit/tempo';
+import { DateInput, format, isBefore, isEqual } from '@formkit/tempo';
 
 @Injectable()
 export class SchedulesService {
@@ -24,6 +24,9 @@ export class SchedulesService {
 
     @Inject()
     private readonly doctorService: DoctorsService,
+
+    @InjectDataSource()
+    private readonly connection: DataSource
   ){}
 
   async create(createScheduleDto: CreateScheduleDto) {
@@ -196,6 +199,27 @@ export class SchedulesService {
       .getMany();
 
       return schedulesByHour.map(scheduleByHour => ScheduleMapper.responseScheduleByHour(scheduleByHour));
+  }
+
+  async getByTypeAppointment(id: number){
+    const date = new Date();
+    const dateFormat = format(date, "YYYY-MM-DD");
+    const schedules = await this.connection.query<Schedule[]>(
+      `select DISTINCT sc.date from schedules sc
+      inner join doctors doc on doc.id = sc.doctorId
+      inner join doctors_by_specialities docspe on docspe.doctorsId = doc.id
+      inner join specialities spe on spe.id = docspe.specialitiesId
+      inner join type_appointment ta on ta.specialityId = spe.id
+      inner join schedule_by_hour schehour on schehour.scheduleId = sc.id
+      where ta.id = ${id} and sc.date >= "${dateFormat}" and schehour.isAvailable = true`);
+    return schedules.map(schedule => ScheduleMapper.transformTime(schedule));
+  }
+
+  async getHoursByDate(date: DateInput){
+    const schedules = await this.connection.query(`select distinct schebyhour.startHour from schedule_by_hour schebyhour
+    inner join schedules sc on sc.id = schebyhour.scheduleId
+    where sc.date = "${date}" and schebyhour.isAvailable = true`);
+    return schedules;
   }
 
   remove(id: number) {

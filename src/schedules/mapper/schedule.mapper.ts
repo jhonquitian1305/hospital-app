@@ -1,3 +1,4 @@
+import { format } from "@formkit/tempo";
 import { ResponseScheduleDto } from "../dto";
 import { ResponseScheduleByHour } from "../dto/response-schedule-by-hour.dto";
 import { Schedule, ScheduleByHour } from "../entities";
@@ -7,10 +8,10 @@ export class ScheduleMapper{
         let scheduleDto: ResponseScheduleDto = {
             id: schedule.id,
             date: schedule.date,
-            doctor: {
-                id: schedule.doctor.id,
-                name: schedule.doctor.fullname
-            },
+            // doctor: {
+            //     id: schedule.doctor.id,
+            //     name: schedule.doctor.fullname
+            // },
             startTime: schedule.startTime,
             endTime: schedule.endTime,
         }
@@ -30,5 +31,11 @@ export class ScheduleMapper{
         }
 
         return scheduleByHourDto;
+    }
+
+    static transformTime(schedule: Schedule){
+        return {
+            date: format(schedule.date, 'DD-MM-YYYY'),
+        }
     }
 }
