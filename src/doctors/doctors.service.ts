@@ -14,6 +14,9 @@ import { Speciality } from '../specialities/entities/speciality.entity';
 import { SpecialitiesService } from 'src/specialities/specialities.service';
 import { UsersService } from '../users/users.service';
 import { RolesEnum } from '../users/dto/role.enum';
+import { RequestDoctorDto } from './dto/request-doctor.dto';
+import { TypeAppointment } from 'src/type_appointments/entities/type_appointment.entity';
+import { Schedule, ScheduleByHour } from 'src/schedules/entities';
 
 @Injectable()
 export class DoctorsService {
@@ -93,8 +96,6 @@ export class DoctorsService {
       specialities: speciality,
     });
 
-    console.log(doctor);
-
     if(!doctor)
       throw new NotFoundException(`Doctor with id ${id} and speciality ${speciality.name} not found`)
 
@@ -119,6 +120,27 @@ export class DoctorsService {
     } catch (error) {
       HandleError.handleDBErrors(error);
     }
+  }
+
+  async findDoctorsAvailable(requestDoctorDto: RequestDoctorDto){
+    const doctors = await this.doctorRepository.createQueryBuilder('dr')
+    .innerJoin('dr.specialities', 'spe')
+    .innerJoin(TypeAppointment, 'type', 'type.speciality = spe.id')
+    .innerJoin(Schedule, 'sche', 'sche.doctor.id = dr.id')
+    .innerJoin(ScheduleByHour, 'schebyhour', 'schebyhour.schedule = sche.id')
+    .where('spe.id = :typeId', {
+      typeId: requestDoctorDto.typeId,
+    })
+    .andWhere('sche.date = :date', {
+      date: requestDoctorDto.date
+    })
+    .andWhere('schebyhour.startHour = :startHour', {
+      startHour: requestDoctorDto.startHour
+    })
+    .andWhere('dr.isActive = true')
+    .getMany();
+
+    return doctors.map(doctor => DoctorMapper.doctorToDoctorDto(doctor));
   }
 
   async remove(id: number) {

@@ -4,6 +4,7 @@ import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { RequestPaginationDto } from 'src/common/dtos';
 import { DoctorMapper } from './mapper/doctor.mapper';
+import { RequestDoctorDto } from './dto/request-doctor.dto';
 
 @Controller('doctors')
 export class DoctorsController {
@@ -28,6 +29,11 @@ export class DoctorsController {
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateDoctorDto: UpdateDoctorDto) {
     return this.doctorsService.update(id, updateDoctorDto);
+  }
+
+  @Get('search/available')
+  async findDoctorsAvailable(@Query() requestDoctorDto: RequestDoctorDto){
+    return await this.doctorsService.findDoctorsAvailable(requestDoctorDto);
   }
 
   @Delete(':id')
