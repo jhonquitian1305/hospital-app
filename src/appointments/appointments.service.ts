@@ -81,7 +81,7 @@ export class AppointmentsService {
   async findAll(requestAppointmentDto: RequestAppointmentDto) {
     const appointments = await this.appointmentRepository
     .createQueryBuilder('ar')
-    .innerJoinAndSelect('ar.user', 'user')
+    .innerJoinAndSelect('ar.patient', 'patient')
     .innerJoinAndSelect('ar.doctor', 'doctor')
     .innerJoinAndSelect('ar.type', 'type')
     .innerJoinAndSelect('ar.state', 'state')
@@ -89,7 +89,7 @@ export class AppointmentsService {
       startHour: requestAppointmentDto.startHour,
       schedule: requestAppointmentDto.date,
     })
-    .andWhere('(:userDni is null OR user.dni = :userDni)', {
+    .andWhere('(:userDni is null OR patient.dni = :userDni)', {
       userDni: requestAppointmentDto.userDni,
     })
     .andWhere('(:doctorId is null OR doctor.id = :doctorId)', {

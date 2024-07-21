@@ -8,7 +8,7 @@ export class AppointmentMapper {
             description: appointment.description,
             schedule: appointment.schedule,
             startHour: appointment.startHour,
-            completed_at: format(appointment.completed_at, "YYYY-MM-DD HH:mm:ss"),
+            completed_at: appointment.completed_at ? format(appointment.completed_at, "YYYY-MM-DD HH:mm:ss") : appointment.completed_at,
             patient: {
                 id: appointment.patient.id,
                 fullname: appointment.patient.fullname,
