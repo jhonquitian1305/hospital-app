@@ -5,8 +5,11 @@ import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { RequestPaginationDto } from 'src/common/dtos';
 import { DoctorMapper } from './mapper/doctor.mapper';
 import { RequestDoctorDto } from './dto/request-doctor.dto';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { ValidRoles } from 'src/auth/interfaces';
 
 @Controller('doctors')
+@Auth(ValidRoles.doctor)
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
@@ -32,6 +35,7 @@ export class DoctorsController {
   }
 
   @Get('search/available')
+  @Auth()
   async findDoctorsAvailable(@Query() requestDoctorDto: RequestDoctorDto){
     return await this.doctorsService.findDoctorsAvailable(requestDoctorDto);
   }

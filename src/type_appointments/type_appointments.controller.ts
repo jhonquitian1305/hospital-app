@@ -2,8 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TypeAppointmentsService } from './type_appointments.service';
 import { CreateTypeAppointmentDto } from './dto/create-type_appointment.dto';
 import { UpdateTypeAppointmentDto } from './dto/update-type_appointment.dto';
+import { ValidRoles } from 'src/auth/interfaces';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('type-appointments')
+@Auth(ValidRoles.doctor)
 export class TypeAppointmentsController {
   constructor(private readonly typeAppointmentsService: TypeAppointmentsService) {}
 
@@ -13,6 +16,7 @@ export class TypeAppointmentsController {
   }
 
   @Get()
+  @Auth()
   findAll() {
     return this.typeAppointmentsService.findAll();
   }

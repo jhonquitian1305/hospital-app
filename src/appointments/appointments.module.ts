@@ -8,6 +8,7 @@ import { PatientsModule } from './../patients/patients.module';
 import { DoctorsModule } from './../doctors/doctors.module';
 import { TypeAppointmentsModule } from './../type_appointments/type_appointments.module';
 import { SchedulesModule } from 'src/schedules/schedules.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [AppointmentsController],
@@ -18,6 +19,7 @@ import { SchedulesModule } from 'src/schedules/schedules.module';
     DoctorsModule,
     TypeAppointmentsModule,
     SchedulesModule,
+    AuthModule,
   ],
 })
 export class AppointmentsModule {}

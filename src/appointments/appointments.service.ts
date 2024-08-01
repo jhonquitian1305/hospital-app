@@ -14,6 +14,7 @@ import { ResponsePaginatedDto } from 'src/common/dtos';
 import { AppointmentMapper } from './mapper/appointment.mapper';
 import { format } from '@formkit/tempo';
 import { PatientsService } from '../patients/patients.service';
+import { Patient } from '../patients/entities/patient.entity';
 
 @Injectable()
 export class AppointmentsService {
@@ -40,14 +41,12 @@ export class AppointmentsService {
     private readonly dataSource: DataSource,
   ){}
 
-  async create(createAppointmentDto: CreateAppointmentDto) {
-    const { userId, doctorId, typeId, ...appointmentData } = createAppointmentDto;
+  async create(createAppointmentDto: CreateAppointmentDto, patient: Patient) {
+    const { doctorId, typeId, ...appointmentData } = createAppointmentDto;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
-    const user = await this.patientsService.findOne(userId);
 
     const typeAppointment = await this.typeAppointmentService.findOne(typeId);
 
@@ -58,7 +57,7 @@ export class AppointmentsService {
     try {
       const appointment = this.appointmentRepository.create({
         ...appointmentData,
-        patient: user,
+        patient,
         doctor,
         type: typeAppointment,
         state: { id: StatesEnum.CREADA}

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { SpecialitiesModule } from '../specialities/specialities.module';
 import { UsersModule } from 'src/users/users.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [DoctorsController],
@@ -13,6 +14,7 @@ import { UsersModule } from 'src/users/users.module';
     TypeOrmModule.forFeature([ Doctor ]),
     SpecialitiesModule,
     UsersModule,
+    AuthModule,
   ],
   exports: [ DoctorsService ]
 })

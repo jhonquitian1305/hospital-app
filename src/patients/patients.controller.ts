@@ -22,6 +22,7 @@ export class PatientsController {
     return await this.patientsService.findAll(paginationDto);
   }
 
+  @Auth(ValidRoles.patient)
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const user = await this.patientsService.findOne(id);
@@ -29,6 +30,7 @@ export class PatientsController {
   }
 
   @Patch(':id')
+  @Auth(ValidRoles.patient)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto
@@ -36,6 +38,7 @@ export class PatientsController {
     return this.patientsService.update(id, updateUserDto);
   }
 
+  @Auth(ValidRoles.patient)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.patientsService.remove(id);

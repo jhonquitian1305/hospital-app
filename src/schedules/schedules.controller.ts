@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { RequestScheduleDto } from './dto/request-schedule.dto';
 import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
 import { DateInput } from '@formkit/tempo';
+import { ValidRoles } from 'src/auth/interfaces';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('schedules')
+@Auth()
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
   @Post()
+  @Auth(ValidRoles.doctor)
   create(@Body() createScheduleDto: CreateScheduleDto) {
     return this.schedulesService.create(createScheduleDto);
   }
