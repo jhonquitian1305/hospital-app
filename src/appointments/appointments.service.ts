@@ -15,9 +15,11 @@ import { AppointmentMapper } from './mapper/appointment.mapper';
 import { format } from '@formkit/tempo';
 import { PatientsService } from '../patients/patients.service';
 import { Patient } from '../patients/entities/patient.entity';
+import { RequestPaginationDto } from '../common/dtos/request-pagination.dto';
+import { Doctor } from '../doctors/entities/doctor.entity';
 
 @Injectable()
-export class AppointmentsService {
+export class AppointmentsService { 
 
   private readonly logger = new Logger('AppointmentsService');
 
@@ -141,6 +143,40 @@ export class AppointmentsService {
     return {
       message: 'Information stored successfully',
     };
+  }
+
+  async getByPatient(patient: Patient, requestPaginationDto: RequestPaginationDto) {
+    const appointments = await this.appointmentRepository.findAndCount({
+      where: { patient: { id: patient.id } },
+      skip: requestPaginationDto.offset,
+      take: requestPaginationDto.limit,
+    });
+
+    const appointmentsDto: ResponsePaginatedDto<ResponseAppointmentDto> = {
+      elements: appointments[0].map(appointment => AppointmentMapper.appointmentToAppointmentDto(appointment)),
+      totalElements: appointments[1],
+      limit: requestPaginationDto.limit,
+      offset: requestPaginationDto.offset,
+    }
+    
+    return appointmentsDto;
+  }
+
+  async getByDoctor(doctor: Doctor, requestPaginationDto: RequestPaginationDto) {
+    const appointments = await this.appointmentRepository.findAndCount({
+      where: { doctor: { id: doctor.id } },
+      skip: requestPaginationDto.offset,
+      take: requestPaginationDto.limit,
+    });
+
+    const appointmentsDto: ResponsePaginatedDto<ResponseAppointmentDto> = {
+      elements: appointments[0].map(appointment => AppointmentMapper.appointmentToAppointmentDto(appointment)),
+      totalElements: appointments[1],
+      limit: requestPaginationDto.limit,
+      offset: requestPaginationDto.offset,
+    }
+    
+    return appointmentsDto;
   }
 
   remove(id: number) {

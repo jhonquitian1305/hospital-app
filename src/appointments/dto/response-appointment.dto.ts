@@ -13,7 +13,6 @@ class ResponseAppointmentDto {
 class DoctorResponse {
     id:         number;
     name:       string;
-    username:   string;
 }
 
 class StateResponse {

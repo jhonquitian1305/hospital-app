@@ -7,6 +7,8 @@ import { Auth } from '../auth/decorators/auth.decorator';
 import { GetUser } from 'src/auth/decorators';
 import { Patient } from 'src/patients/entities/patient.entity';
 import { ValidRoles } from 'src/auth/interfaces';
+import { RequestPaginationDto } from '../common/dtos/request-pagination.dto';
+import { Doctor } from '../doctors/entities/doctor.entity';
 
 @Controller('appointments')
 @Auth()
@@ -40,6 +42,21 @@ export class AppointmentsController {
     await this.appointmentsService.registerAppointmentCompleted(id, updateAppointmentDto);
   }
 
-  @Get('appointments-by-patient')
-  getAppointmentsByPatient(){}
+  @Get('my-appointments/by-patient')
+  @Auth(ValidRoles.patient)
+  getByPatient(
+    @GetUser() patient: Patient,
+    @Query() requestPaginationDto: RequestPaginationDto,
+  ){
+    return this.appointmentsService.getByPatient(patient, requestPaginationDto);
+  }
+
+  @Get('my-appointments/by-doctor')
+  @Auth(ValidRoles.doctor)
+  getByDoctor(
+    @GetUser() doctor: Doctor,
+    @Query() requestPaginationDto: RequestPaginationDto,
+  ){
+    return this.appointmentsService.getByDoctor(doctor, requestPaginationDto);
+  }
 }

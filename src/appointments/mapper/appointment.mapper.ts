@@ -18,7 +18,6 @@ export class AppointmentMapper {
             doctor: {
                 id: appointment.doctor.id,
                 name: appointment.doctor.fullname,
-                username: appointment.doctor.fullname,
             },
             type: {
                 id: appointment.type.id,
