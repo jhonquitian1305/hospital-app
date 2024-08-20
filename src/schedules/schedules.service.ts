@@ -2,10 +2,9 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { DataSource, Repository } from 'typeorm';
-import { DoctorsService } from '../doctors/doctors.service';
 import { CreateScheduleDto, RequestScheduleDto, ResponseScheduleDto } from './dto';
 import { ScheduleByHour } from './entities';
-import {  ResponsePaginatedDto } from '../common/dtos';
+import { ResponsePaginatedDto } from '../common/dtos';
 import { ScheduleMapper } from './mapper/schedule.mapper';
 import { Doctor } from 'src/doctors/entities/doctor.entity';
 import { SchedulesDto } from './dto/create-schedule.dto';
@@ -22,20 +21,16 @@ export class SchedulesService {
     @InjectRepository(ScheduleByHour)
     private readonly scheduleByHourRepository: Repository<ScheduleByHour>,
 
-    @Inject()
-    private readonly doctorService: DoctorsService,
-
     @InjectDataSource()
     private readonly connection: DataSource
   ){}
 
-  async create(createScheduleDto: CreateScheduleDto) {
+  async create(createScheduleDto: CreateScheduleDto, doctor: Doctor) {
 
     const newDate = new Date();
     const date = format(newDate, "YYYY-MM-DD", "en");
     
     const { schedulesDto } = createScheduleDto;
-    const doctor = await this.doctorService.findOne(createScheduleDto.doctorId);
 
     const schedulesToSave: Schedule[] = [];
     const schedulesByHour: ScheduleByHour[] = [];
@@ -115,8 +110,11 @@ export class SchedulesService {
       .andWhere(`(:startTime is null or sr.startTime = :startTime)`, {
         startTime: requestScheduleDto.startTime,
       })
-      .andWhere(`(:date is null or sr.date = :date)`, {
-        date: requestScheduleDto.date,
+      .andWhere(`(:dateStart is null or sr.date >= :dateStart)`, {
+        dateStart: requestScheduleDto.dateStart,
+      })
+      .andWhere(`(:dateEnd is null or sr.date <= :dateEnd)`, {
+        dateEnd: requestScheduleDto.dateEnd,
       })
       .andWhere('(:specialityId is null or specialities.id = :specialityId)',{
         specialityId: requestScheduleDto.specialityId,

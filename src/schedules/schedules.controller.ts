@@ -6,6 +6,8 @@ import { RequestScheduleByHourDto } from './dto/request-schedule-by-hour.dto';
 import { DateInput } from '@formkit/tempo';
 import { ValidRoles } from 'src/auth/interfaces';
 import { Auth } from '../auth/decorators/auth.decorator';
+import { Doctor } from '../doctors/entities/doctor.entity';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @Controller('schedules')
 @Auth()
@@ -14,8 +16,11 @@ export class SchedulesController {
 
   @Post()
   @Auth(ValidRoles.doctor)
-  create(@Body() createScheduleDto: CreateScheduleDto) {
-    return this.schedulesService.create(createScheduleDto);
+  create(
+    @Body() createScheduleDto: CreateScheduleDto,
+    @GetUser() doctor: Doctor,
+  ) {
+    return this.schedulesService.create(createScheduleDto, doctor);
   }
 
   @Get()

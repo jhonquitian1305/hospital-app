@@ -3,8 +3,6 @@ import { Type } from "class-transformer";
 import { IsArray, IsDateString, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateScheduleDto {
-    @IsNumber()
-    doctorId: number;
 
     @IsNotEmpty()
     @IsArray()
