@@ -12,7 +12,7 @@ export class RequestAppointmentDto{
 
     @IsOptional()
     @IsDateString()
-    date: DateInput;
+    date: Date;
 
     @IsOptional()
     @IsInt()

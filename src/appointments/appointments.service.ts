@@ -104,6 +104,9 @@ export class AppointmentsService {
     })
     .limit(requestAppointmentDto.limit)
     .offset(requestAppointmentDto.offset)
+    .orderBy('ar.schedule', 'ASC')
+    .addOrderBy('ar.state', 'ASC')
+    .addOrderBy('ar.startHour', 'ASC')
     .getManyAndCount();
 
     const responseAppointmentDto: ResponsePaginatedDto<ResponseAppointmentDto> = {
@@ -162,18 +165,18 @@ export class AppointmentsService {
     return appointmentsDto;
   }
 
-  async getByDoctor(doctor: Doctor, requestPaginationDto: RequestPaginationDto) {
+  async getByDoctor(doctor: Doctor, requestAppointmentDto: RequestAppointmentDto) {
     const appointments = await this.appointmentRepository.findAndCount({
-      where: { doctor: { id: doctor.id } },
-      skip: requestPaginationDto.offset,
-      take: requestPaginationDto.limit,
+      where: { doctor: { id: doctor.id }, schedule: requestAppointmentDto.date },
+      skip: requestAppointmentDto.offset,
+      take: requestAppointmentDto.limit,
     });
 
     const appointmentsDto: ResponsePaginatedDto<ResponseAppointmentDto> = {
       elements: appointments[0].map(appointment => AppointmentMapper.appointmentToAppointmentDto(appointment)),
       totalElements: appointments[1],
-      limit: requestPaginationDto.limit,
-      offset: requestPaginationDto.offset,
+      limit: requestAppointmentDto.limit,
+      offset: requestAppointmentDto.offset,
     }
     
     return appointmentsDto;

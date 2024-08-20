@@ -55,8 +55,8 @@ export class AppointmentsController {
   @Auth(ValidRoles.doctor)
   getByDoctor(
     @GetUser() doctor: Doctor,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() requestAppointmentDto: RequestAppointmentDto,
   ){
-    return this.appointmentsService.getByDoctor(doctor, requestPaginationDto);
+    return this.appointmentsService.getByDoctor(doctor, requestAppointmentDto);
   }
 }
