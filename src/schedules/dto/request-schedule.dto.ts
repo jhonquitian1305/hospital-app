@@ -18,7 +18,11 @@ export class RequestScheduleDto{
 
     @IsOptional()
     @IsDateString({}, { message: "the date must be in YYYY-MM-DD format" })
-    date: DateInput;
+    dateStart: DateInput;
+
+    @IsOptional()
+    @IsDateString({}, { message: "the date must be in YYYY-MM-DD format" })
+    dateEnd: DateInput
 
     @IsOptional()
     @IsInt()
